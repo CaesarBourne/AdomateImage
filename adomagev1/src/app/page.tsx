@@ -1,13 +1,14 @@
-import EditorPage from "@/components/editor/EditorPage";
-import { ModeToggle } from "@/components/modeToggle";
+import EditorPage from '@/components/editor/EditorPage'
+import { ModeToggle } from '@/components/modeToggle'
+import React from 'react'
 
-export default function Home() {
+const page = () => {
   return (
-    <div>
     <div>
       <ModeToggle/>
       <EditorPage/>
     </div>
-    </div>
-  );
+  )
 }
+
+export default page
