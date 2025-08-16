@@ -1,9 +1,13 @@
+import EditorPage from "@/components/editor/EditorPage";
 import { ModeToggle } from "@/components/modeToggle";
 
 export default function Home() {
   return (
     <div>
-      <ModeToggle />
+    <div>
+      <ModeToggle/>
+      <EditorPage/>
+    </div>
     </div>
   );
 }
