@@ -61,12 +61,12 @@
 
     /* Core surfaces - Much better contrast hierarchy */
     --background: #fafaf9;         /* Warmest white - main background */
-    --foreground: #1c1917;         /* Rich dark brown - main text */
+    --foreground: #1c1917;         /* Richdark brown - main text */
 
     --card: #ffffff;               /* Pure white - elevated cards */
     --card-foreground: #1c1917;
-
-    --popover: #ffffff;            /* Pure white - popovers */
+ 
+    --popover: #ffffff;            /* Purewhite - popovers */
     --popover-foreground: #1c1917;
 
     /* Primary brand - warm neutral */
@@ -110,57 +110,57 @@
 }
 
 /* ======================================
-   3) DARK THEME - Improved with better contrast
-   New palette with proper hierarchy and depth
+   3) DARK THEME - Improved with glossy blue tint
+   New palette with proper hierarchy and cool depth
 ====================================== */
 .dark {
-  /* Core surfaces - Much better contrast hierarchy */
-  --background: #0a0a0a;           /* True black - main background */
-  --foreground: #fafaf9;           /* Warm white - main text */
+  /* Core surfaces - Cool blue-tinted hierarchy */
+  --background: #0a0b0f;           /* Deep blue-black - main background */
+  --foreground: #f8fafc;           /* Cool white - main text */
 
-  --card: #171717;                 /* Dark gray - elevated cards */
-  --card-foreground: #fafaf9;
+  --card: #1a1d29;                 /* Blue-tinted dark - elevated cards */
+  --card-foreground: #f8fafc;
 
-  --popover: #171717;              /* Dark gray - popovers */
-  --popover-foreground: #fafaf9;
+  --popover: #1a1d29;              /* Blue-tinted dark - popovers */
+  --popover-foreground: #f8fafc;
 
-  /* Primary brand - warm light */
-  --primary: #e7e5e4;              /* Warm light - primary actions */
-  --primary-foreground: #1c1917;
+  /* Primary brand - glossy blue accent */
+  --primary: #3b82f6;              /* Vibrant blue - primary actions */
+  --primary-foreground: #f8fafc;
 
-  --secondary: #262626;            /* Medium dark - secondary elements */
-  --secondary-foreground: #d4d4d8;
+  --secondary: #1e293b;            /* Blue-gray - secondary elements */
+  --secondary-foreground: #cbd5e1;
 
-  --muted: #262626;                /* Medium dark - muted backgrounds */
-  --muted-foreground: #a1a1aa;     /* Light gray - muted text */
+  --muted: #1e293b;                /* Blue-gray - muted backgrounds */
+  --muted-foreground: #94a3b8;     /* Cool gray - muted text */
 
-  --accent: #404040;               /* Lighter gray - accent backgrounds */
-  --accent-foreground: #fafaf9;
+  --accent: #334155;               /* Steel blue - accent backgrounds */
+  --accent-foreground: #f8fafc;
 
   /* Interactive states */
   --destructive: #ef4444;          /* Bright red for dark mode */
   --destructive-foreground: #fef2f2;
   
-  --border: #404040;               /* Visible borders in dark mode */
-  --input: #262626;                /* Dark input backgrounds */
-  --ring: #737373;                 /* Gray focus ring */
+  --border: #334155;               /* Blue-tinted borders */
+  --input: #1e293b;                /* Blue-gray input backgrounds */
+  --ring: #3b82f6;                 /* Blue focus ring */
 
-  /* Charts - brighter for dark mode */
-  --chart-1: #a78bfa;
-  --chart-2: #22d3ee;
-  --chart-3: #60a5fa;
-  --chart-4: #34d399;
-  --chart-5: #fbbf24;
+  /* Charts - cooler palette for blue theme */
+  --chart-1: #8b5cf6;
+  --chart-2: #06b6d4;
+  --chart-3: #3b82f6;
+  --chart-4: #10b981;
+  --chart-5: #f59e0b;
 
-  /* Sidebar - distinct from main content */
-  --sidebar: #171717;              /* Darker gray - sidebar background */
-  --sidebar-foreground: #fafaf9;
-  --sidebar-primary: #e7e5e4;
-  --sidebar-primary-foreground: #1c1917;
-  --sidebar-accent: #262626;
-  --sidebar-accent-foreground: #fafaf9;
-  --sidebar-border: #525252;       /* More visible sidebar borders */
-  --sidebar-ring: #737373;
+  /* Sidebar - distinct blue-tinted surfaces */
+  --sidebar: #1a1d29;              /* Blue-tinted dark - sidebar background */
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #3b82f6;
+  --sidebar-primary-foreground: #f8fafc;
+  --sidebar-accent: #1e293b;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: #475569;       /* Visible blue-gray borders */
+  --sidebar-ring: #3b82f6;
 }
 
 /* ======================================
@@ -202,6 +202,29 @@
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.5);
   }
+
+  /* Custom range thumb */
+input[type="range"].slider-thumb::-webkit-slider-thumb {
+  appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: hsl(var(--primary));
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+
+input[type="range"].slider-thumb::-moz-range-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: hsl(var(--primary));
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+
 }
 
 /* ======================================
@@ -223,17 +246,35 @@
   .text-secondary { @apply text-muted-foreground; }
   .text-tertiary { @apply text-muted-foreground/70; }
 
-  /* Interactive states */
-  .interactive {
-    @apply transition-colors duration-200 ease-in-out;
+  /* Enhanced glossy effects for dark mode */
+  .dark .glass-effect {
+    background: linear-gradient(135deg, 
+      rgba(59, 130, 246, 0.1) 0%, 
+      rgba(30, 41, 59, 0.8) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(59, 130, 246, 0.2);
   }
 
-  .interactive:hover {
-    @apply bg-accent/50;
+  .dark .glossy-card {
+    background: linear-gradient(145deg, #1a1d29, #1e293b);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(59, 130, 246, 0.1);
   }
 
-  .interactive:active {
-    @apply bg-accent;
+  .dark .blue-glow {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+
+  .dark .interactive-blue {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .dark .interactive-blue:hover {
+    background: linear-gradient(135deg, 
+      rgba(59, 130, 246, 0.15) 0%, 
+      rgba(51, 65, 85, 0.9) 100%);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
   }
 
   /* Focus visible improvements */
@@ -292,7 +333,46 @@ html {
   scroll-padding-top: 5rem; 
 }
 
-/* Reduced motion preferences */
+  /* Custom slider styling */
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: hsl(var(--primary));
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .slider::-webkit-slider-track {
+    background: hsl(var(--muted));
+    border-radius: 999px;
+  }
+
+  .slider::-moz-range-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: hsl(var(--primary));
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .slider::-moz-range-track {
+    background: hsl(var(--muted));
+    border-radius: 999px;
+    border: none;
+  }
+
+  /* Reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

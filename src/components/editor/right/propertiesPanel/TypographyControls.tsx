@@ -19,16 +19,16 @@ export default function TypographyControls({ layer }: Props) {
   return (
     <Section title="Typography">
       {/* Font Family */}
-      <div>
-        <label className="block text-xs mb-1">Font Family</label>
+      <div className="space-y-2">
+        <label className="text-xs text-muted-foreground">Font Family</label>
         <select
           value={layer.fontFamily}
           onChange={(e: ChangeEvent<HTMLSelectElement>) =>
             update(layer.id, { fontFamily: e.target.value })
           }
-          className="w-full rounded-md border border-input bg-background px-2 py-1 text-sm"
+          className="w-full h-9 rounded-md border border-border bg-card text-card-foreground px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
         >
-          {!loaded && <option>Loading...</option>}
+          {!loaded && <option>Loading fonts...</option>}
           {fonts.map((font) => (
             <option key={font.family} value={font.family}>
               {font.family}
@@ -38,10 +38,9 @@ export default function TypographyControls({ layer }: Props) {
       </div>
 
       {/* Font Size */}
-      <div>
-        <label className="block text-xs mb-1">Font Size</label>
-        <div className="flex items-center gap-2">
-          {/* Slider */}
+      <div className="space-y-2">
+        <label className="text-xs text-muted-foreground">Size</label>
+        <div className="flex items-center gap-3">
           <input
             type="range"
             min={8}
@@ -51,9 +50,8 @@ export default function TypographyControls({ layer }: Props) {
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               update(layer.id, { fontSize: Number(e.target.value) })
             }
-            className="flex-1 accent-blue-500 cursor-pointer"
+            className="flex-1 h-2 bg-muted rounded-full appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary slider-thumb"
           />
-          {/* Numeric Input */}
           <input
             type="number"
             min={8}
@@ -63,14 +61,14 @@ export default function TypographyControls({ layer }: Props) {
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               update(layer.id, { fontSize: Number(e.target.value) })
             }
-            className="w-16 rounded-md border border-input bg-background px-2 py-1 text-sm"
+            className="w-16 h-9 rounded-md border border-border bg-card text-card-foreground px-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           />
         </div>
       </div>
 
       {/* Font Weight */}
-      <div>
-        <label className="block text-xs mb-1">Font Weight</label>
+      <div className="space-y-2">
+        <label className="text-xs text-muted-foreground">Weight</label>
         <select
           value={layer.fontWeight}
           onChange={(e: ChangeEvent<HTMLSelectElement>) =>
@@ -81,14 +79,13 @@ export default function TypographyControls({ layer }: Props) {
                   : Number(e.target.value),
             })
           }
-          className="w-full rounded-md border border-input bg-background px-2 py-1 text-sm"
+          className="w-full h-9 rounded-md border border-border bg-card text-card-foreground px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
         >
           {currentFont?.variants.map((variant) => {
-            // normalize Google’s variant names (e.g., "regular", "700italic")
             const label =
               variant === "regular"
-                ? "400"
-                : variant.replace("italic", " italic");
+                ? "400 - Regular"
+                : variant.replace("italic", " Italic");
             const value =
               variant === "regular" ? 400 : parseInt(variant) || variant;
             return (

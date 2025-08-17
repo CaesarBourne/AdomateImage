@@ -1,4 +1,3 @@
-// right/propertiesPanel/TransformControls.tsx
 import { ChangeEvent, useState } from "react";
 import { Section } from "./Section";
 import { TextLayer } from "@/types/editor";
@@ -24,7 +23,7 @@ export default function TransformControls({ layer }: Props) {
 
     const onMove = (moveEvt: MouseEvent) => {
       const delta = moveEvt.clientX - startX;
-      const nextRotation = startRotation + delta; // 1px = 1deg adjust
+      const nextRotation = startRotation + delta;
       update(layer.id, { rotation: nextRotation });
     };
 
@@ -40,36 +39,42 @@ export default function TransformControls({ layer }: Props) {
 
   return (
     <Section title="Transform">
-      <div className="grid grid-cols-3 gap-2 items-center">
-        <div>
-          <label className="block text-xs mb-1">X</label>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-2">
+          <label className="text-xs text-muted-foreground">X Position</label>
           <input
             type="number"
-            value={layer.x}
+            value={Math.round(layer.x)}
             onChange={numInput("x")}
-            className="w-full rounded-md border border-input bg-background px-2 py-1 text-sm"
+            className="w-full h-9 rounded-md border border-border bg-card text-card-foreground px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           />
         </div>
-        <div>
-          <label className="block text-xs mb-1">Y</label>
+        <div className="space-y-2">
+          <label className="text-xs text-muted-foreground">Y Position</label>
           <input
             type="number"
-            value={layer.y}
+            value={Math.round(layer.y)}
             onChange={numInput("y")}
-            className="w-full rounded-md border border-input bg-background px-2 py-1 text-sm"
+            className="w-full h-9 rounded-md border border-border bg-card text-card-foreground px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           />
         </div>
-        <div>
-          <label className="block text-xs mb-1">Rotation</label>
-          <div
-            className={`flex items-center gap-2 px-2 py-1 rounded-md border border-input bg-background cursor-ew-resize select-none ${
-              dragging ? "bg-accent/20" : ""
-            }`}
-            onMouseDown={startDrag}
-          >
-            <RotateCw size={16} className="text-muted-foreground" />
-            <span className="text-sm">{Math.round(layer.rotation)}°</span>
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-xs text-muted-foreground">Rotation</label>
+        <div
+          className={`flex items-center justify-between h-9 px-3 rounded-md border border-border bg-card cursor-ew-resize select-none transition-colors ${
+            dragging ? "bg-accent border-primary" : "hover:bg-accent/50"
+          }`}
+          onMouseDown={startDrag}
+        >
+          <div className="flex items-center gap-2">
+            <RotateCw size={14} className="text-muted-foreground" />
+            <span className="text-sm text-card-foreground">Drag to rotate</span>
           </div>
+          <span className="text-sm font-medium text-card-foreground">
+            {Math.round(layer.rotation)}°
+          </span>
         </div>
       </div>
     </Section>

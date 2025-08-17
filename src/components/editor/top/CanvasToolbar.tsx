@@ -6,6 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ModeToggle } from "@/components/modeToggle";
 
 type Props = {
   onExport: () => void;
@@ -32,6 +33,7 @@ export function CanvasToolbar({
 
   return (
     <div className="flex items-center justify-end gap-3">
+      <ModeToggle/>
       {/* Undo / Redo group with counter */}
       <div className="flex items-center gap-1 rounded-lg border bg-card px-1 py-1">
         <TooltipProvider>

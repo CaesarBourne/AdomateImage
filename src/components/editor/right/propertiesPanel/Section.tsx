@@ -9,7 +9,7 @@ export function Section({
   children: ReactNode;
 }) {
   return (
-    <div className="p-4 border-b border-border">
+    <div className="p-4 border-b  border-border">
       <h3 className="text-sm font-medium mb-3 text-muted-foreground">
         {title}
       </h3>

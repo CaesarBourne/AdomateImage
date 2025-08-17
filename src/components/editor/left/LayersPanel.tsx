@@ -1,11 +1,16 @@
-// src/components/editor/left/LayersPanel.tsx
-'use client';
+"use client";
 
-import React from 'react';
-import { Image as ImageIcon, Plus, Trash2, Pencil, GripVertical } from 'lucide-react';
-import UploadController from '../UploadController';
-import { shortFileLabel } from '@/lib/format';
-import { Textarea } from '@/components/ui/textarea';
+import React from "react";
+import {
+  Image as ImageIcon,
+  Plus,
+  Trash2,
+  Pencil,
+  GripVertical,
+} from "lucide-react";
+import UploadController from "../UploadController";
+import { shortFileLabel } from "@/lib/format";
+import { Textarea } from "@/components/ui/textarea";
 
 import {
   useImageMeta,
@@ -13,9 +18,9 @@ import {
   useSelectedId,
   useEditorActions,
   useReorderTextLayers,
-} from '@/store/editorStore';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+} from "@/store/editorStore";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type LayersPanelProps = {
   hasImage: boolean;
@@ -28,7 +33,8 @@ const LayersPanel: React.FC<LayersPanelProps> = ({ hasImage, onReplace }) => {
 
   const layers = useTextLayers();
   const selectedId = useSelectedId();
-  const { addTextLayer, selectTextLayer, updateTextProps, deleteTextLayer } = useEditorActions();
+  const { addTextLayer, selectTextLayer, updateTextProps, deleteTextLayer } =
+    useEditorActions();
   const reorderTextLayers = useReorderTextLayers();
 
   // inline edit state
@@ -46,12 +52,12 @@ const LayersPanel: React.FC<LayersPanelProps> = ({ hasImage, onReplace }) => {
 
   const onDragStart = (id: string) => (e: React.DragEvent) => {
     draggingId.current = id;
-    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.effectAllowed = "move";
   };
 
   const onDragOver = (overId: string) => (e: React.DragEvent) => {
     e.preventDefault(); // allow drop
-    e.dataTransfer.dropEffect = 'move';
+    e.dataTransfer.dropEffect = "move";
     if (dragOverId !== overId) setDragOverId(overId);
   };
 
@@ -80,132 +86,181 @@ const LayersPanel: React.FC<LayersPanelProps> = ({ hasImage, onReplace }) => {
   return (
     <div className="space-y-4">
       {/* Upload/Replace background */}
-      <UploadController
-        variant="card"
-        label={hasImage ? 'Click to Replace background png' : 'Upload background PNG'}
-        onSelect={onReplace}
-        accept="image/png"
-        className="w-full"
-      />
+      <div className="space-y-3">
+        <UploadController
+          variant="card"
+          label={hasImage ? "Replace Background" : "Upload Background"}
+          onSelect={onReplace}
+          accept="image/png"
+          className="w-full"
+        />
 
-      {/* Background  */}
-      <div className="flex items-center gap-2 rounded-lg border bg-card px-3 py-2">
-        <ImageIcon className="h-5 w-5 opacity-80" />
-        <div className="min-w-0">
-          <div className="text-sm font-medium">Background image</div>
-          <div className="truncate text-xs text-muted-foreground" title={meta?.name ?? undefined}>
-            {hasImage ? bgLabel : 'No image selected'}
+        {/* Background Info Card */}
+        <div className="flex items-center gap-3 rounded-lg border border-sidebar-border bg-sidebar-accent/30 px-3 py-2.5">
+          <div className="flex-shrink-0">
+            <div className="w-8 h-8 rounded-md bg-sidebar flex items-center justify-center">
+              <ImageIcon className="h-4 w-4 text-sidebar-foreground" />
+            </div>
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-medium text-sidebar-foreground">
+              Background
+            </div>
+            <div
+              className="truncate text-xs text-sidebar-foreground/70"
+              title={meta?.name ?? undefined}
+            >
+              {hasImage ? bgLabel : "No image selected"}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Text layers header + add */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium">Text layers</h3>
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={() => addTextLayer()}
-          disabled={!hasImage}
-          className="gap-1"
-        >
-          <Plus className="h-4 w-4" /> Add
-        </Button>
-      </div>
+      {/* Text Layers Section */}
+      <div className="space-y-3">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h4 className="text-sm font-medium text-sidebar-foreground">
+            Text Layers
+          </h4>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => addTextLayer()}
+            disabled={!hasImage}
+            className="h-7 gap-1.5 text-xs"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Add Layer
+          </Button>
+        </div>
 
-      {/* List (draggable) */}
-      <div className="space-y-2">
-        {ordered.map((l, idx) => {
-          const active = l.id === selectedId;
-          const isEditing = editingId === l.id;
-          const isDragOver = dragOverId === l.id;
+        {/* Layers List */}
+        <div className="space-y-2">
+          {ordered.map((l, idx) => {
+            const active = l.id === selectedId;
+            const isEditing = editingId === l.id;
+            const isDragOver = dragOverId === l.id;
 
-          return (
-            <div
-              key={l.id}
-              draggable
-              onDragStart={onDragStart(l.id)}
-              onDragOver={onDragOver(l.id)}
-              onDragLeave={onDragLeave}
-              onDrop={onDrop(l.id)}
-              className={cn(
-                'rounded-lg border p-2 cursor-grab transition-colors',
-                active ? 'bg-secondary/40 border-border' : 'hover:bg-secondary/30',
-                isDragOver && 'ring-1 ring-primary/40'
-              )}
-              onClick={() => selectTextLayer(l.id)}
-              title="Drag to reorder • Click to select"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span
-                    className="shrink-0 text-muted-foreground"
-                    onMouseDown={(e) => e.stopPropagation()}
-                  >
-                    <GripVertical className="h-4 w-4" />
-                  </span>
-
-                  <div className="min-w-0">
-                    <div className="text-sm font-semibold truncate">
-                      {`Text layer ${idx + 1}`}
-                    </div>
-                    {!isEditing ? (
-                      <div className="text-xs text-muted-foreground truncate">
-                        {l.text || '(empty)'}
+            return (
+              <div
+                key={l.id}
+                draggable
+                onDragStart={onDragStart(l.id)}
+                onDragOver={onDragOver(l.id)}
+                onDragLeave={onDragLeave}
+                onDrop={onDrop(l.id)}
+                className={cn(
+                  "rounded-lg border transition-all duration-200 cursor-grab",
+                  active
+                    ? "bg-sidebar-accent border-sidebar-accent-foreground/20 shadow-sm"
+                    : "bg-sidebar border-sidebar-border hover:bg-sidebar-accent/50",
+                  isDragOver &&
+                    "ring-2 ring-sidebar-primary/40 ring-offset-1 ring-offset-sidebar"
+                )}
+                onClick={() => selectTextLayer(l.id)}
+                title="Drag to reorder • Click to select"
+              >
+                <div className="p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div
+                        className="flex-shrink-0 text-sidebar-foreground/60 hover:text-sidebar-foreground cursor-grab"
+                        onMouseDown={(e) => e.stopPropagation()}
+                      >
+                        <GripVertical className="h-4 w-4" />
                       </div>
-                    ) : null}
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setEditingId(isEditing ? null : l.id)}
-                    aria-label="Edit text"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => deleteTextLayer(l.id)}
-                    aria-label="Delete layer"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <div className="text-sm font-medium text-sidebar-foreground">
+                            Layer {idx + 1}
+                          </div>
+                          {active && (
+                            <div className="w-2 h-2 rounded-full bg-sidebar-primary" />
+                          )}
+                        </div>
+                        {!isEditing && (
+                          <div className="text-xs text-sidebar-foreground/70 truncate mt-0.5">
+                            {l.text || "(empty text)"}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div
+                      className="flex items-center gap-1"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setEditingId(isEditing ? null : l.id)}
+                        className="h-7 w-7 p-0 hover:bg-sidebar-accent"
+                        title="Edit text"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteTextLayer(l.id)}
+                        className="h-7 w-7 p-0 hover:bg-destructive/10 hover:text-destructive"
+                        title="Delete layer"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Inline Editor */}
+                  {isEditing && (
+                    <div
+                      className="mt-3 pt-3 border-t border-sidebar-border"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Textarea
+                        value={l.text ?? ""}
+                        onChange={(e) =>
+                          updateTextProps(l.id, { text: e.target.value })
+                        }
+                        placeholder="Enter your text..."
+                        rows={3}
+                        className="text-sm bg-sidebar border-sidebar-border focus:border-sidebar-primary"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            setEditingId(null);
+                          }
+                        }}
+                      />
+                      <div className="mt-2 text-xs text-sidebar-foreground/60">
+                        <span className="font-medium">Shift+Enter</span> for new
+                        line • <span className="font-medium">Enter</span> to
+                        finish
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
+            );
+          })}
 
-              {/* inline editor */}
-{isEditing && (
-  <div className="mt-2" onClick={(e) => e.stopPropagation()}>
-    <Textarea
-      value={l.text ?? ''}
-      onChange={(e) => updateTextProps(l.id, { text: e.target.value })}
-      placeholder="Type text…"
-      rows={4}
-      className="text-sm"
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          // Enter = done (don’t insert a newline)
-          e.preventDefault();
-          setEditingId(null);
-        }
-        // Shift+Enter falls through → inserts "\n"
-      }}
-    />
-    <div className="mt-1 text-[11px] text-muted-foreground">
-      Shift+Enter = new line • Enter = done
-    </div>
-  </div>
-)}
+          {/* Empty State */}
+          {ordered.length === 0 && (
+            <div className="text-center py-8">
+              <div className="w-12 h-12 rounded-full bg-sidebar-muted flex items-center justify-center mx-auto mb-3">
+                <Plus className="h-6 w-6 text-sidebar-foreground/40" />
+              </div>
+              <p className="text-sm text-sidebar-foreground/70">
+                No text layers yet
+              </p>
+              <p className="text-xs text-sidebar-foreground/50 mt-1">
+                Add a layer to get started
+              </p>
             </div>
-          );
-        })}
-        {ordered.length === 0 && (
-          <div className="text-xs text-muted-foreground">No text layers yet.</div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
