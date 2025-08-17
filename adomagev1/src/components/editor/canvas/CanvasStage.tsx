@@ -3,24 +3,32 @@
 
 import { useEffect, useRef } from 'react';
 import { Stage, Layer, Image as KonvaImage } from 'react-konva';
-import type Konva from 'konva';                      // ← type import
+import type Konva from 'konva';
 import useImage from 'use-image';
 import { useViewportBox } from '@/hooks/useViewportBox';
-import { useDisplay, useEditorActions, useHasImage, useImageMeta } from '@/store/editorStore';
+import {
+  useDisplay,
+  useEditorActions,
+  useHasImage,
+  useImageMeta,
+  useTextLayers,
+  useSelectedId,
+} from '@/store/editorStore';
 import UploadController from '../UploadController';
 import FileDropTarget from './FileDropTarget';
+import TextNode from './TextNode';
 
 const VIEWPORT_MAX_HEIGHT = 480;
 
-type CanvasStageProps = {
-  stageRef: React.RefObject<Konva.Stage | null>;           // ← receive ref from parent
-};
+type CanvasStageProps = { stageRef: React.RefObject<Konva.Stage | null> };
 
 const CanvasStage: React.FC<CanvasStageProps> = ({ stageRef }) => {
   const hasImage = useHasImage();
   const image = useImageMeta();
   const display = useDisplay();
-  const { setImageFromFile, setDisplayByContainer } = useEditorActions();
+  const layers = useTextLayers();
+  const selectedId = useSelectedId();
+  const { setImageFromFile, setDisplayByContainer, selectTextLayer } = useEditorActions();
 
   const [htmlImage] = useImage(image?.src || '', 'anonymous');
 
@@ -52,15 +60,34 @@ const CanvasStage: React.FC<CanvasStageProps> = ({ stageRef }) => {
                 </div>
               ) : (
                 <Stage
-                  ref={stageRef}                                 
+                  ref={stageRef}
                   width={display.width}
                   height={display.height}
                   className="rounded-xl shadow-md bg-transparent"
+                  onMouseDown={(e) => {
+                    // click empty stage deselects
+                    if (e.target === e.target.getStage()) selectTextLayer(null);
+                  }}
                 >
                   <Layer listening={false}>
                     <KonvaImage image={htmlImage} width={display.width} height={display.height} />
                   </Layer>
-                  {/* Future: text layer goes here */}
+
+                  {/* text layer */}
+                  <Layer>
+                    {layers
+                      .slice()
+                      .sort((a, b) => a.z - b.z)
+                      .map((l) => (
+                        <TextNode
+                          key={l.id}
+                          layer={l}
+                          scale={display.scale}
+                          selected={selectedId === l.id}
+                          onSelect={(id) => selectTextLayer(id)}
+                        />
+                      ))}
+                  </Layer>
                 </Stage>
               )}
             </div>
