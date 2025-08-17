@@ -93,3 +93,4 @@ const TextNode: React.FC<Props> = ({ layer, scale, selected, onSelect }) => {
 };
 
 export default TextNode;
+

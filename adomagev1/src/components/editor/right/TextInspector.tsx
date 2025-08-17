@@ -1,118 +1,147 @@
+// src/components/editor/right/TextInspector.tsx
+"use client";
 
+import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectContent, SelectValue, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Switch } from "@/components/ui/switch";
-import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { useFontLoader } from "@/hooks/useFontLoader";
+import {
+  useEditorActions,
+  useSelectedId,
+  useTextLayers,
+} from "@/store/editorStore";
 
-type Align = "left" | "center" | "right";
-type Props = {
-  fontFamily: string;
-  fontSize: number;
-  fontWeight: "Regular" | "Bold" | "Medium";
-  color: string;
-  opacity: number; // 0-100
-  align: Align;
-  multiline: boolean;
-  onChange: (patch: Partial<Props>) => void;
-};
+const FONT_FAMILIES = ["Inter", "Roboto", "Open Sans", "Montserrat", "Lato"];
+const WEIGHTS = ["regular", 400, 500, 600, 700, "bold"] as const;
 
-export function TextInspector(props: Props) {
-  const { fontFamily, fontSize, fontWeight, color, opacity, align, multiline, onChange } = props;
+export default function TextInspector() {
+  const selectedId = useSelectedId();
+  const layers = useTextLayers();
+  const layer = layers.find((l) => l.id === selectedId) ?? null;
+
+  const { updateTextProps } = useEditorActions();
+
+  // ✅ Always call the hook (safe even if no layer/family)
+  const family = layer?.fontFamily;
+  useFontLoader(family, [400, 700]);
+
+  if (!layer) {
+    return (
+      <div className="rounded-lg border bg-card p-3 text-sm text-muted-foreground">
+        Select a text layer to edit its typography.
+      </div>
+    );
+  }
 
   return (
-    <Card className="p-4 space-y-4">
-      <h3 className="text-sm font-medium">Text</h3>
-
+    <div className="space-y-4 rounded-lg border bg-card p-3">
       {/* Font family */}
-      <div className="space-y-2">
-        <Label>Text</Label>
+      <div className="space-y-1.5">
+        <Label>Font family</Label>
         <Select
-          value={fontFamily}
-          onValueChange={(v) => onChange({ fontFamily: v })}
+          value={layer.fontFamily}
+          onValueChange={(v) => updateTextProps(layer.id, { fontFamily: v })}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Font" />
+            <SelectValue placeholder="Choose font…" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Inter">Inter</SelectItem>
-            <SelectItem value="Geist">Geist</SelectItem>
-            <SelectItem value="Roboto">Roboto</SelectItem>
+            {FONT_FAMILIES.map((f) => (
+              <SelectItem key={f} value={f}>
+                {f}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
 
-      {/* Size + weight */}
+      {/* Size + Weight */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <Label>Font size</Label>
+        <div className="space-y-1.5">
+          <Label>Font size (px)</Label>
           <Input
             type="number"
-            value={fontSize}
-            onChange={(e) => onChange({ fontSize: Number(e.target.value) || 0 })}
+            min={1}
+            value={layer.fontSize}
+            onChange={(e) =>
+              updateTextProps(layer.id, {
+                fontSize: Math.max(1, Number(e.target.value || 1)),
+              })
+            }
           />
         </div>
-        <div className="space-y-2">
-          <Label>Font weight</Label>
-            <Select
-            value={fontWeight}
-            onValueChange={(v: "Regular" | "Bold" | "Medium") => onChange({ fontWeight: v })}
+
+        <div className="space-y-1.5">
+          <Label>Weight</Label>
+          <Select
+            value={
+              // display "regular" for 400, "bold" for "bold", otherwise the numeric
+              typeof layer.fontWeight === "number"
+                ? layer.fontWeight === 400
+                  ? "regular"
+                  : String(layer.fontWeight)
+                : layer.fontWeight === "bold"
+                ? "bold"
+                : "regular"
+            }
+            onValueChange={(v) => {
+              // ✅ Save only allowed values: number | "normal" | "bold"
+              const next =
+                v === "bold" ? "bold" : v === "regular" ? 400 : Number(v); // 100..900
+              updateTextProps(layer.id, { fontWeight: next });
+            }}
           >
-            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Regular">Regular</SelectItem>
-              <SelectItem value="Medium">Medium</SelectItem>
-              <SelectItem value="Bold">Bold</SelectItem>
+              {WEIGHTS.map((w) => (
+                <SelectItem key={String(w)} value={String(w)}>
+                  {String(w)}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      {/* Color + opacity */}
-      <div className="space-y-2">
-        <Label>Text color</Label>
+      {/* Opacity */}
+      <div className="space-y-1.5">
+        <Label>Opacity</Label>
         <div className="flex items-center gap-3">
-          <input
-            type="color"
-            className="h-9 w-9 rounded-md border"
-            value={color}
-            onChange={(e) => onChange({ color: e.target.value })}
-          />
-          <div className="flex-1">
+          <div className="grow">
             <Slider
-              value={[opacity]}
+              value={[Math.round(layer.opacity * 100)]}
+              onValueChange={([v]) =>
+                updateTextProps(layer.id, { opacity: (v ?? 100) / 100 })
+              }
+              min={0}
               max={100}
               step={1}
-              onValueChange={([v]) => onChange({ opacity: v })}
             />
-            <div className="text-xs opacity-70 mt-1">{opacity}</div>
           </div>
+          <Input
+            className={cn("w-16 text-right")}
+            type="number"
+            min={0}
+            max={100}
+            value={Math.round(layer.opacity * 100)}
+            onChange={(e) => {
+              const n = Math.max(0, Math.min(100, Number(e.target.value || 0)));
+              updateTextProps(layer.id, { opacity: n / 100 });
+            }}
+          />
         </div>
       </div>
-
-      {/* Align + multiline */}
-      <div className="space-y-2">
-        <Label>Opacity</Label>
-        <div className="space-y-3">
-          <ToggleGroup
-            type="single"
-            value={align}
-            onValueChange={(v: Align) => v && onChange({ align: v })}
-            className="justify-start"
-          >
-            <ToggleGroupItem value="left">H</ToggleGroupItem>
-            <ToggleGroupItem value="center">H</ToggleGroupItem>
-            <ToggleGroupItem value="right">A</ToggleGroupItem>
-          </ToggleGroup>
-
-          <div className="flex items-center justify-between rounded-md bg-muted/30 px-3 py-2">
-            <span className="text-sm">Multi-line editing</span>
-            <Switch checked={multiline} onCheckedChange={(v) => onChange({ multiline: v })} />
-          </div>
-        </div>
-      </div>
-    </Card>
+    </div>
   );
 }
