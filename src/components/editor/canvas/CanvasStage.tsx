@@ -43,6 +43,7 @@ const CanvasStage: React.FC<CanvasStageProps> = ({ stageRef }) => {
 
   return (
     <div className="relative flex w-full items-center justify-center">
+     
       <div className="relative w-full max-w-[980px] rounded-2xl bg-muted/20 border border-border/60 p-4 overflow-hidden" style={{ minHeight: 520 }}>
         {!hasImage ? (
           <UploadController

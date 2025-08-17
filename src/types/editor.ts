@@ -53,15 +53,39 @@ export type EditorTextSlice = {
 };
 
 export type EditorActions = {
+  commit: () => void;
+  undo: () => void;
+  redo: () => void;
+  resetHistory: () => void;
+  resetCanvas: () => void; // <-- add this
   setImageFromFile: (file: File) => Promise<void>;
   clearImage: () => void;
-  setDisplayByContainer: (containerW: number, containerH: number) => void;
+  setDisplayByContainer: (w: number, h: number) => void;
 
   addTextLayer: (defaults?: Partial<TextLayer>) => string;
   selectTextLayer: (id: string | null) => void;
   updateTextProps: (id: string, patch: Partial<TextLayer>) => void;
   deleteTextLayer: (id: string) => void;
-  reorderTextLayers(nextOrderIds: string[]): void;
+  reorderTextLayers: (ids: string[]) => void;
+};
+
+export type HistoryEntry = {
+  project: EditorProjectSlice;
+  text: EditorTextSlice;
+};
+
+export type HistorySlice = {
+  past: HistoryEntry[];
+  present: HistoryEntry;
+  future: HistoryEntry[];
+  limit: number;
+};
+
+export type HistoryActions = {
+  undo: () => void;
+  redo: () => void;
+  commit: () => void; // push new snapshot
+  resetHistory: () => void;
 };
 
 // extend the state with the text slice:
@@ -69,5 +93,6 @@ export type EditorState = {
   project: EditorProjectSlice;
   view: EditorViewSlice;
   text: EditorTextSlice;
-  actions: EditorActions;
+  history: HistorySlice;
+  actions: EditorActions & HistoryActions;
 };
