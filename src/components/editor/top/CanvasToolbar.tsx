@@ -88,7 +88,7 @@ export function CanvasToolbar({
             <TooltipTrigger asChild>
               <Button
                 variant="secondary"
-                className="gap-2"
+                className="gap-2 cursor-pointer"
                 onClick={onExport}
                 aria-label="Download image"
               >

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { cx } from 'class-variance-authority';
-import { useRef, useState } from 'react';
+import { cx } from "class-variance-authority";
+import { useRef, useState } from "react";
 
 type FileDropTargetProps = {
   onFile: (file: File) => void;
-  accept?: 'image/png';
+  accept?: "image/png";
   disabled?: boolean;
   className?: string;
   overlayText?: string;
@@ -14,10 +14,10 @@ type FileDropTargetProps = {
 
 const FileDropTarget: React.FC<FileDropTargetProps> = ({
   onFile,
-  accept = 'image/png',
+  accept = "image/png",
   disabled,
   className,
-  overlayText = 'Drop PNG to replace background',
+  overlayText = "Drop PNG to replace background",
   children,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -26,7 +26,7 @@ const FileDropTarget: React.FC<FileDropTargetProps> = ({
   const handleDragOver: React.DragEventHandler<HTMLDivElement> = (e) => {
     if (disabled) return;
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
+    e.dataTransfer.dropEffect = "copy";
   };
 
   const handleDragEnter: React.DragEventHandler<HTMLDivElement> = (e) => {
@@ -55,18 +55,21 @@ const FileDropTarget: React.FC<FileDropTargetProps> = ({
     if (!files || files.length === 0) return;
 
     const file = files[0];
-    if (accept === 'image/png' && file.type !== 'image/png') return;
+
+    // Only accept PNG files - reject JPG and others
+    if (accept === "image/png" && file.type !== "image/png") return;
+
     onFile(file);
   };
 
   return (
-  <div
-  className={cx('relative', className)}
-  onDragOver={handleDragOver}
-  onDragEnter={handleDragEnter}
-  onDragLeave={handleDragLeave}
-  onDrop={handleDrop}
->
+    <div
+      className={cx("relative", className)}
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       {children}
 
       {isDragging && !disabled && (
