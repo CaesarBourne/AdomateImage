@@ -3,6 +3,7 @@ import TypographyControls from "./TypographyControls";
 import AlignmentControls from "./AlignmentControls";
 import AppearanceControls from "./AppearanceControls";
 import TransformControls from "./TransformControls";
+import SnapControls from "./SnapControls";
 
 export default function PropertiesPanel() {
   const selectedId = useEditorStore((s) => s.text.selectedId);
@@ -64,6 +65,7 @@ export default function PropertiesPanel() {
       <div className="space-y-6">
         <TypographyControls layer={layer} />
         <TransformControls layer={layer} />
+        <SnapControls layer={layer}/>
         <AlignmentControls layer={layer} />
         <AppearanceControls layer={layer} />
       </div>
