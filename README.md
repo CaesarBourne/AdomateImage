@@ -81,28 +81,14 @@ Deploy to **Vercel**, add the same env vars there.
 
 ## Environment variables
 
-Two ways to get Google Fonts metadata:
-
-### 1) Recommended — server-side proxy (keeps your key off the client)
-
-```
-GOOGLE_FONTS_API_KEY=your-google-fonts-key
-```
-
-* Used by `src/app/api/fonts/route.ts` to fetch:
+* `NEXT_PUBLIC_GOOGLE_FONTS_API_KEY=your-google-fonts-key`
+  Used by `src/store/fontStore.ts` (via `src/lib/googleFonts.ts`) to fetch the **Google Fonts catalog** client-side:
   `https://www.googleapis.com/webfonts/v1/webfonts?sort=popularity&key=…`
+  *Restrict this key to your domain in Google Cloud Console.*
 
-### 2) Simple demo — client-side (key is public)
+Fonts are loaded at runtime via CSS2 in `src/hooks/useFontLoader.ts`, e.g.
+`https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap`.
 
-```
-NEXT_PUBLIC_GOOGLE_FONTS_API_KEY=your-google-fonts-key
-```
-
-* Used by `src/store/fontStore.ts` via `lib/googleFonts.ts`.
-
-> You can enable either or both. The app prefers the server route when present.
-
----
 
 ## How it works
 
